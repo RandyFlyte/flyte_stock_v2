@@ -46,3 +46,34 @@ export async function POST(request) {
     });
   }
 }
+
+// DELETE request to /api. Deletes a position from the database.
+export async function DELETE(request) {
+  // Await the client and connect to the database
+  const client = await clientPromise;
+  const db = client.db('flyte-stocks');
+
+  try {
+    const symbol = request.nextUrl.searchParams.get('symbol');
+    // Delete the document with the specified symbol
+    const result = await db.collection('positions').deleteOne({ symbol });
+    // Check the result for success
+    if (result.acknowledged && result.deletedCount) {
+      return NextResponse.json({
+        status: 200,
+        data: { deletedCount: result.deletedCount },
+      });
+    } else {
+      return NextResponse.json({
+        status: 500,
+        data: { error: 'Failed to delete document' },
+      });
+    }
+  } catch (error) {
+    // Handle any errors that occur during the operation
+    return NextResponse.json({
+      status: 500,
+      data: { error: error.message },
+    });
+  }
+}

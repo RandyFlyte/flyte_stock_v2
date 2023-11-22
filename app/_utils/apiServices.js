@@ -2,7 +2,11 @@
   This file contains the API services for fetching data from the backend.
   The data is fetched using the browser's Fetch API.
 */
-import { usePositionsStore, useSymbolStore, useInfoStore } from '@/app/_utils/store';
+import {
+  usePositionsStore,
+  useSymbolStore,
+  useInfoStore,
+} from '@/app/_utils/store';
 
 /**
  * Fetches positions data from the backend.
@@ -38,7 +42,30 @@ export const fetchInfo = async (symbol) => {
       throw new Error('Network response was not ok ' + response.statusText);
     }
     const data = await response.json();
-    useInfoStore.getState().setInfo({ ...useInfoStore.getState().info, [symbol]: data.data });
+    useInfoStore
+      .getState()
+      .setInfo({ ...useInfoStore.getState().info, [symbol]: data.data });
+  } catch (error) {
+    console.error('There has been a problem with your fetch operation:', error);
+    throw error;
+  }
+};
+
+/**
+ * Deletes a position from the backend.
+ * Updates the positions state in the usePositionsStore with the fetched data.
+ * @param {string} symbol - The symbol to delete.
+ * @throws {Error} When the network response is not ok or if there's a problem with the fetch operation.
+ */
+export const deletePosition = async (symbol) => {
+  try {
+    const response = await fetch(`/api?symbol=${symbol}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return true;
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error);
     throw error;
