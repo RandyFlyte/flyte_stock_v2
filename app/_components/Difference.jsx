@@ -17,7 +17,7 @@ const Difference = ({ symbolData, position }) => {
     }
   };
 
-  return <span>Difference: ${calculateDifference()}</span>;
+  return <span>$ {calculateDifference()}</span>;
 };
 
 export default Difference;
